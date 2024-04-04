@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+		"module": "esnext",
+		"moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "removeComments": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+		"declaration": true,
+    "lib": [
+      "ESNext"
+    ],
+    "sourceMap": true,
+    "outDir": "dist",
+  },
+  "include": ["src/**/*.ts", "__tests__"]
+}
