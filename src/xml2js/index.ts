@@ -2,25 +2,27 @@ import * as htmlparser2 from 'htmlparser2';
 
 const PARENT_KEY = "_parent";
 
-const nativeType = (value: string) => {
-  const maybeBool = value.toLowerCase().trim();
+const nativeType = (value: string): string | boolean => {
+  const trimmed = value.trim();
+  const maybeBool = trimmed.toLowerCase();
   if (maybeBool === 'true') return true;
   if (maybeBool === 'false') return false;
-  return value.trim();
+  return trimmed
 };
 
-const formatText = (text: string) => {
+const formatText = (text: string): string => {
   return text.split('\n').map(line => line.trim()).join('');
 }
 
-const formatAttributes = (attributes: Record<string, unknown>) => {
+const formatAttributes = (attributes: Record<string, unknown>): Record<string, string | boolean> => {
+  const formattedAttributes: Record<string, string | boolean> = {};
   for (const key of Object.keys(attributes)) {
-    attributes[key] = nativeType((attributes[key] as string)?.trim());
+    formattedAttributes[key] = nativeType((attributes[key] as string)?.trim());
   }
-  return attributes;
+  return formattedAttributes;
 };
 
-export const xml2js = (xml: string) => {
+export const xml2js = (xml: string): Record<string, any> => {
   let currentElement: Record<string, any> = {};
   let currentTagName = ""
 
@@ -29,7 +31,7 @@ export const xml2js = (xml: string) => {
       const formattedAttributes = formatAttributes(attributes);
       currentTagName = tagName;
 
-      const haveAttributes = !!Object.keys(formattedAttributes).length;
+      const haveAttributes = Object.keys(formattedAttributes).length > 0;
       const element: Record<string, unknown> = haveAttributes ? formattedAttributes : {};
 
       if (!currentElement[tagName]) {
@@ -77,5 +79,6 @@ export const xml2js = (xml: string) => {
   parser.write(xml)
   parser.end()
 
-  return currentElement;
+  return currentElement
 }
+
