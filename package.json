@@ -1,12 +1,17 @@
 {
-  "name": "pg-migrate",
+  "name": "node-utils",
   "version": "1.0.0",
-  "description": "easy postgres migration",
-  "exports": "./lib/index.mjs",
+  "description": "node-utils",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.mjs",
+      "require": "./lib/index.mjs"
+    }
+  },
   "type": "module",
   "node": ">=16",
   "scripts": {
-    "xml": "xsd-ts ./src/PhoneNumberMetadata.xml type.ts",
     "test": "vitest run",
     "build": "rm -rf dist lib && pnpm tsc --p tsconfig.build.json && rollup -c && rm -rf dist"
   },

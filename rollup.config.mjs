@@ -1,20 +1,20 @@
-import terser from "@rollup/plugin-terser";
-import typescript from "@rollup/plugin-typescript";
+import terser from '@rollup/plugin-terser'
+import typescript from '@rollup/plugin-typescript'
 
 export default {
-  input: "dist/index.js",
+  input: 'dist/index.js',
   plugins: [
     typescript({
-      tsconfig: "tsconfig.json",
-      outDir: "lib",
-      include: ["src/**/*.ts"],
+      tsconfig: 'tsconfig.json',
+      outDir: 'lib',
+      include: ['src/**/*.ts'],
     }),
     terser(),
   ],
   output: [
     {
-      format: "esm",
-      file: "lib/index.mjs",
+      format: 'esm',
+      file: 'lib/index.mjs',
     },
   ],
-};
+}
