@@ -1,6 +1,13 @@
-import { describe, it, expect } from 'vitest'
-import { sizeof } from '../index.js'
+import { describe, it, expect, vi } from 'vitest'
 import v8 from 'node:v8'
+import { sizeof } from '../index.js'
+
+vi.mock('../index.js', async (importOriginal) => {
+  const mod = await importOriginal<typeof import('../index.js')>()
+  return {
+    sizeof: (obj: unknown) => +mod.sizeof(obj).split(' ')[0],
+  }
+})
 
 const LONG_STRING =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac vestibulum lacus, sit amet maximus libero. Aliquam erat volutpat. Quisque at orci tortor. Donec at mi nunc.'

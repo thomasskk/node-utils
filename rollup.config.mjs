@@ -1,13 +1,14 @@
 import terser from '@rollup/plugin-terser'
 import typescript from '@rollup/plugin-typescript'
 
+/** @type {import("rollup").RollupOptions} */
 export default {
-  input: 'dist/index.js',
+  input: 'src/index.ts',
   plugins: [
     typescript({
-      tsconfig: 'tsconfig.json',
+      tsconfig: 'tsconfig.build.json',
       outDir: 'lib',
-      include: ['src/**/*.ts'],
+      rootDir: 'src',
     }),
     terser(),
   ],

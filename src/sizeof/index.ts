@@ -1,5 +1,17 @@
 import { SIZES } from './constants.js'
 
+const bytesToSize = (n: number): string => {
+  let l = 0
+  while (n >= 1000 && ++l) {
+    n = n / 1000
+  }
+
+  const size = n.toFixed(n < 10 && l > 0 ? 1 : 0)
+  const unit = ['Bytes', 'KB', 'MB', 'GB'][l]
+
+  return `${size} ${unit}`
+}
+
 const preciseStringSizeNode = (str: string) => {
   if (str === '') return 4
   return Buffer.from(str).byteLength
@@ -96,5 +108,5 @@ export const sizeof = (obj: unknown) => {
     totalSize = objectSizeSimple(obj)
   }
 
-  return totalSize
+  return bytesToSize(totalSize)
 }
