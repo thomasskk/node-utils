@@ -5,3 +5,4 @@ export declare const downloadFile: (args: {
     path: string;
 }) => Promise<FuncResponse>;
 export declare const getErrorMessage: (maybeError: unknown) => string;
+export declare const isDir: (path: string) => Promise<boolean>;
