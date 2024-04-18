@@ -1,5 +1,7 @@
 import fs from 'fs'
 import stream from 'stream'
+import util from 'util'
+import cp from 'child_process'
 import { FuncResponse } from './types.js'
 
 export const valueInObj = <T extends Record<string | number | symbol, unknown>>(
@@ -11,9 +13,9 @@ export const valueInObj = <T extends Record<string | number | symbol, unknown>>(
 
 export const download = async (args: {
   url: string
-  path: string
+  dest: string
 }): Promise<FuncResponse> => {
-  const { url, path } = args
+  const { url, dest } = args
 
   try {
     const res = await fetch(url)
@@ -26,7 +28,7 @@ export const download = async (args: {
     }
 
     const readable = stream.Readable.fromWeb(res.body)
-    const writeStream = fs.createWriteStream(path)
+    const writeStream = fs.createWriteStream(dest)
     await stream.promises.finished(readable.pipe(writeStream))
 
     return {
@@ -60,4 +62,23 @@ export const isDir = async (path: string): Promise<boolean> => {
   } catch (error) {
     return false
   }
+}
+
+export const execAsync = async (
+  cmd: string,
+  options: {
+    log?: boolean
+  } = {}
+) => {
+  const { log = true } = options
+
+  const promise = util.promisify(cp.exec)(cmd)
+  const child = promise.child
+
+  if (log) {
+    child.stdout?.pipe(process.stdout)
+    child.stderr?.pipe(process.stdout)
+  }
+
+  await promise
 }
