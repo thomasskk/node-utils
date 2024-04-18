@@ -9,7 +9,7 @@ export const valueInObj = <T extends Record<string | number | symbol, unknown>>(
   return value in obj
 }
 
-export const downloadFile = async (args: {
+export const download = async (args: {
   url: string
   path: string
 }): Promise<FuncResponse> => {
