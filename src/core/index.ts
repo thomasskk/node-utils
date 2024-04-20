@@ -1,8 +1,14 @@
-import fs from 'fs'
-import stream from 'stream'
-import util from 'util'
-import cp from 'child_process'
+import fs from 'node:fs'
+import stream from 'node:stream'
+import util from 'node:util'
+import cp from 'node:child_process'
+import { createReadStream, createWriteStream } from 'node:fs'
+import { pipeline } from 'node:stream'
+import { promisify } from 'node:util'
+import zlib from 'node:zlib'
 import { FuncResponse } from './types.js'
+
+const pipe = promisify(pipeline)
 
 export const valueInObj = <T extends Record<string | number | symbol, unknown>>(
   value: string | number | symbol,
@@ -92,4 +98,45 @@ export const chunk = <T = unknown>(arr: T[], n: number): T[][] => {
     },
     [[]]
   )
+}
+
+export const gzip = async (
+  input: string,
+  output: string
+): Promise<FuncResponse> => {
+  try {
+    const gzip = zlib.createGzip({
+      level: zlib.constants.Z_BEST_COMPRESSION,
+    })
+    const source = createReadStream(input)
+    const destination = createWriteStream(output)
+    await pipe(source, gzip, destination)
+
+    return { success: true }
+  } catch (e) {
+    return {
+      error: getErrorMessage(e),
+      success: false,
+    }
+  }
+}
+
+export const gunzip = async (
+  input: string,
+  output: string
+): Promise<FuncResponse> => {
+  try {
+    const gunzip = zlib.createGunzip()
+    const source = createReadStream(input)
+    const destination = createWriteStream(output)
+    const stream = source.pipe(gunzip).pipe(destination)
+    await new Promise((resolve) => stream.on('finish', resolve))
+
+    return { success: true }
+  } catch (e) {
+    return {
+      error: getErrorMessage(e),
+      success: false,
+    }
+  }
 }
