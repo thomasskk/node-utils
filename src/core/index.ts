@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import stream from 'node:stream'
+import stream, { Readable } from 'node:stream'
 import util from 'node:util'
 import cp from 'node:child_process'
 import { createReadStream, createWriteStream } from 'node:fs'
@@ -100,43 +100,83 @@ export const chunk = <T = unknown>(arr: T[], n: number): T[][] => {
   )
 }
 
-export const gzip = async (
-  input: string,
-  output: string
-): Promise<FuncResponse> => {
-  try {
-    const gzip = zlib.createGzip({
-      level: zlib.constants.Z_BEST_COMPRESSION,
-    })
-    const source = createReadStream(input)
-    const destination = createWriteStream(output)
-    await pipe(source, gzip, destination)
+export const getBufferFromStream = async (
+  stream: stream.Readable
+): Promise<Buffer> => {
+  const chunks: Buffer[] = []
+  stream.on('data', (chunk) => {
+    chunks.push(chunk)
+  })
+  await new Promise((resolve) => stream.on('end', resolve))
+  return Buffer.concat(chunks)
+}
 
-    return { success: true }
-  } catch (e) {
-    return {
-      error: getErrorMessage(e),
-      success: false,
-    }
+export const gzip = (
+  args:
+    | {
+        path: string
+        data?: never
+      }
+    | {
+        data: Buffer
+        path?: never
+      }
+): {
+  getStream: () => stream.Readable
+  writeTo: (output: string) => Promise<void>
+  getBuffer: () => Promise<Buffer>
+} => {
+  const { path, data } = args
+  const gzip = zlib.createGzip({
+    level: zlib.constants.Z_BEST_COMPRESSION,
+  })
+  const source =
+    data !== undefined ? Readable.from(data) : createReadStream(path)
+
+  return {
+    getStream() {
+      return source.pipe(gzip)
+    },
+    async writeTo(output: string) {
+      const destination = createWriteStream(output)
+      await pipe(source, gzip, destination)
+    },
+    async getBuffer() {
+      return getBufferFromStream(source.pipe(gzip))
+    },
   }
 }
 
-export const gunzip = async (
-  input: string,
-  output: string
-): Promise<FuncResponse> => {
-  try {
-    const gunzip = zlib.createGunzip()
-    const source = createReadStream(input)
-    const destination = createWriteStream(output)
-    const stream = source.pipe(gunzip).pipe(destination)
-    await new Promise((resolve) => stream.on('finish', resolve))
+export const gunzip = (
+  args:
+    | {
+        path: string
+        data?: never
+      }
+    | {
+        data: Buffer
+        path?: never
+      }
+): {
+  getStream: () => stream.Readable
+  writeTo: (output: string) => Promise<void>
+  getBuffer: () => Promise<Buffer>
+} => {
+  const { path, data } = args
+  const gunzip = zlib.createGunzip()
+  const source =
+    data !== undefined ? Readable.from(data) : createReadStream(path)
 
-    return { success: true }
-  } catch (e) {
-    return {
-      error: getErrorMessage(e),
-      success: false,
-    }
+  return {
+    getStream() {
+      return source.pipe(gunzip)
+    },
+    async writeTo(output: string) {
+      const destination = createWriteStream(output)
+      await pipe(source, gunzip, destination)
+    },
+    async getBuffer() {
+      return getBufferFromStream(source.pipe(gunzip))
+    },
   }
 }
