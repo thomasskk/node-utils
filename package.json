@@ -12,6 +12,7 @@
   "type": "module",
   "node": ">=16",
   "scripts": {
+    "preinstall": "git config --local core.hooksPath git-hooks",
     "test": "vitest run",
     "build": "rm -fr lib && rollup -c"
   },
