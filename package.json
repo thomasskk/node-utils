@@ -13,6 +13,9 @@
 	"release": {
 		"branches": ["main"]
 	},
+	"publishConfig": {
+		"access": "public"
+	},
 	"type": "module",
 	"node": ">=16",
 	"scripts": {
