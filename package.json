@@ -2,6 +2,7 @@
 	"name": "@thomasskk/node-utils",
 	"version": "1.0.0",
 	"description": "node-utils",
+	"packageManager": "pnpm@8.15.1",
 	"exports": {
 		".": {
 			"types": "./lib/index.d.ts",
@@ -11,6 +12,9 @@
 	},
 	"publishConfig": {
 		"@thomasskk:registry": "https://npm.pkg.github.com"
+	},
+	"release": {
+		"branches": ["main"]
 	},
 	"type": "module",
 	"node": ">=16",
@@ -32,5 +36,8 @@
 		"tslib": "^2.6.2",
 		"typescript": "^5.4.3",
 		"vitest": "^1.4.0"
+	},
+	"dependencies": {
+		"semantic-release": "^23.0.8"
 	}
 }
