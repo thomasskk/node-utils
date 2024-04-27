@@ -1,34 +1,36 @@
 {
-  "name": "node-utils",
-  "version": "1.0.0",
-  "description": "node-utils",
-  "exports": {
-    ".": {
-      "types": "./lib/index.d.ts",
-      "import": "./lib/index.mjs",
-      "require": "./lib/index.mjs"
-    }
-  },
-  "type": "module",
-  "node": ">=16",
-  "scripts": {
-    "preinstall": "git config --local core.hooksPath git-hooks",
-    "test": "vitest run",
-    "build": "rm -fr lib && rollup -c"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^11.1.6",
-    "@types/node": "^20.12.2",
-    "@typescript-eslint/eslint-plugin": "^7.4.0",
-    "@typescript-eslint/parser": "^7.4.0",
-    "eslint": "^8.57.0",
-    "rollup": "^4.13.2",
-    "tinybench": "^2.7.0",
-    "tslib": "^2.6.2",
-    "typescript": "^5.4.3",
-    "vitest": "^1.4.0"
-  }
+	"name": "@thomasskk/node-utils",
+	"version": "1.0.0",
+	"description": "node-utils",
+	"exports": {
+		".": {
+			"types": "./lib/index.d.ts",
+			"import": "./lib/index.mjs",
+			"require": "./lib/index.mjs"
+		}
+	},
+	"publishConfig": {
+		"@thomasskk:registry": "https://npm.pkg.github.com"
+	},
+	"type": "module",
+	"node": ">=16",
+	"scripts": {
+		"test": "vitest run",
+		"build": "rm -fr lib && rollup -c"
+	},
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@rollup/plugin-terser": "^0.4.4",
+		"@rollup/plugin-typescript": "^11.1.6",
+		"@types/node": "^20.12.2",
+		"@typescript-eslint/eslint-plugin": "^7.4.0",
+		"@typescript-eslint/parser": "^7.4.0",
+		"eslint": "^8.57.0",
+		"rollup": "^4.13.2",
+		"tinybench": "^2.7.0",
+		"tslib": "^2.6.2",
+		"typescript": "^5.4.3",
+		"vitest": "^1.4.0"
+	}
 }
