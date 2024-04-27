@@ -2,16 +2,13 @@
 	"name": "@thomasskk/node-utils",
 	"version": "1.0.0",
 	"description": "node-utils",
-	"packageManager": "pnpm@8.15.1",
+	"packageManager": "pnpm@latest",
 	"exports": {
 		".": {
 			"types": "./lib/index.d.ts",
 			"import": "./lib/index.mjs",
 			"require": "./lib/index.mjs"
 		}
-	},
-	"publishConfig": {
-		"@thomasskk:registry": "https://npm.pkg.github.com"
 	},
 	"release": {
 		"branches": ["main"]
@@ -35,9 +32,7 @@
 		"tinybench": "^2.7.0",
 		"tslib": "^2.6.2",
 		"typescript": "^5.4.3",
-		"vitest": "^1.4.0"
-	},
-	"dependencies": {
+		"vitest": "^1.4.0",
 		"semantic-release": "^23.0.8"
 	}
 }
