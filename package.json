@@ -2,7 +2,7 @@
 	"name": "@thomasskk/node-utils",
 	"version": "1.0.0",
 	"description": "node-utils",
-	"packageManager": "pnpm@9.0.6",
+	"packageManager": "pnpm@latest",
 	"exports": {
 		".": {
 			"types": "./lib/index.d.ts",
