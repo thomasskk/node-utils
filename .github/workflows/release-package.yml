@@ -12,8 +12,8 @@ jobs:
       packages: write
       contents: read
     steps:
-      - uses: pnpm/action-setup@v3
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.node-version'
