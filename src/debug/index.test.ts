@@ -120,8 +120,9 @@ describe("debug", () => {
 			debug.disable();
 			const inst = debug("foo");
 			const messages: string[] = [];
-			inst.log = (msg) =>
+			inst.log = (msg) => {
 				messages.push(msg.replace(/^[^@]*@([^@]+)@.*$/, "$1"));
+			};
 
 			inst("@test@");
 			expect(messages).toStrictEqual([]);
