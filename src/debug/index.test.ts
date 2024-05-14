@@ -36,7 +36,7 @@ describe("debug", () => {
 
 		log("using custom log function");
 		log("using custom log function again");
-		log("%O", 12345);
+		log(12345);
 
 		expect(messages.length).toStrictEqual(3);
 	});

@@ -6,9 +6,13 @@ export const enable = (
 	state: State,
 	namespaces: string | boolean | undefined,
 ) => {
-	process.env.DEBUG = namespaces !== undefined ? String(namespaces) : undefined;
-
-	state.namespaces = String(namespaces);
+	if (namespaces !== undefined) {
+		const stringNamespaces = String(namespaces);
+		process.env.DEBUG = stringNamespaces;
+		state.namespaces = stringNamespaces;
+	} else {
+		process.env.DEBUG = undefined;
+	}
 
 	state.names = [];
 	state.skips = [];
@@ -59,11 +63,16 @@ export const selectColor = (state: State, namespace: string): number => {
 	return state.colors[Math.abs(hash) % state.colors.length];
 };
 
-export const coerce = (val: unknown): unknown => {
+export const coerce = (val: unknown): string => {
 	if (val instanceof Error) {
 		return val.stack || val.message;
 	}
-	return val;
+
+	if (typeof val === "string") {
+		return val;
+	}
+
+	return JSON.stringify(val);
 };
 
 export const enabled = (state: State, name: string): boolean => {
@@ -92,37 +101,25 @@ export const useColors = (state: State) => {
 		: tty.isatty(process.stderr.fd);
 };
 
-const getDate = (state: State) => {
-	if (state.inspectOpts.hideDate) {
-		return "";
-	}
-	return `${new Date().toISOString()} `;
-};
-
-export const formatArgs = (
-	state: State,
+export const formatArg = (
 	{
 		namespace,
 		useColors,
-		diff,
 		color,
 	}: {
 		namespace: string;
 		useColors: boolean;
-		diff: number;
 		color: number;
 	},
-	args: [string, ...unknown[]],
+	arg: string,
 ) => {
 	if (useColors) {
 		const colorCode = `\u001B[3${color < 8 ? color : `8;5;${color}`}`;
 		const prefix = `  ${colorCode};1m${namespace} \u001B[0m`;
-
-		args[0] = prefix + args[0].split("\n").join(`\n${prefix}`);
-		args.push(`${colorCode}m+${diff}\u001B[0m`);
-	} else {
-		args[0] = `${getDate(state)}${namespace} ${args[0]}`;
+		return prefix + arg.split("\n").join(`\n${prefix}`);
 	}
+
+	return `${namespace} ${arg}`;
 };
 
 export const log = (state: State, ...args: [string, ...unknown[]]): boolean => {

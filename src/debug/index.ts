@@ -1,4 +1,3 @@
-import util from "node:util";
 import type { Debug, State } from "./types.js";
 import {
 	coerce,
@@ -6,7 +5,7 @@ import {
 	selectColor,
 	enabled,
 	disable,
-	formatArgs,
+	formatArg,
 	log,
 	enable,
 	getInspectOpts,
@@ -15,7 +14,6 @@ import {
 const state: State = {
 	names: [],
 	skips: [],
-	formatters: {},
 	namespaces: "",
 	colors: [
 		20, 21, 26, 27, 32, 33, 38, 39, 40, 41, 42, 43, 44, 45, 56, 57, 62, 63, 68,
@@ -28,65 +26,30 @@ const state: State = {
 };
 
 const createDebug = (namespace: string) => {
-	let prevTime: number | undefined;
 	let enableOverride: null | unknown = null;
-	let namespacesCache: string;
+	let namespacesCache: string | undefined;
 	let enabledCache: boolean;
 
 	enable(state, process.env.DEBUG);
 
-	const debug: Debug = (...args) => {
+	const debug: Debug = (arg) => {
 		if (!debug.enabled) {
 			return;
 		}
 
-		const curr = Number(new Date());
-		const diff = curr - (prevTime || curr);
-
-		prevTime = curr;
-
-		args[0] = coerce(args[0]);
-
-		if (typeof args[0] !== "string") {
-			args.unshift("%O");
-		}
-
-		const tupleArgs = args as [string, ...unknown[]];
-
-		let index = 0;
-
-		tupleArgs[0] = tupleArgs[0].replace(/%([a-zA-Z%])/g, (match, format) => {
-			// If we encounter an escaped % then don't increase the array index
-			if (match === "%%") {
-				return "%";
-			}
-			index++;
-			const formatter = state.formatters[format];
-			if (typeof formatter === "function") {
-				const val = args[index];
-				args.splice(index, 1);
-				index--;
-				return formatter(debug, val);
-			}
-
-			return match;
-		});
-
-		formatArgs(
-			state,
+		const formatedArg = formatArg(
 			{
 				useColors: debug.useColors,
 				namespace: debug.namespace,
 				color: debug.color,
-				diff,
 			},
-			tupleArgs,
+			coerce(arg),
 		);
 
 		if (debug.log) {
-			debug.log(...tupleArgs);
+			debug.log(formatedArg);
 		} else {
-			log(state, ...tupleArgs);
+			log(state, formatedArg);
 		}
 	};
 
@@ -111,9 +74,7 @@ const createDebug = (namespace: string) => {
 			}
 
 			if (namespacesCache !== state.namespaces) {
-				if (state.namespaces !== undefined) {
-					namespacesCache = state.namespaces;
-				}
+				namespacesCache = state.namespaces;
 				enabledCache = enabled(state, namespace);
 			}
 
@@ -134,19 +95,5 @@ createDebug.skips = state.skips;
 createDebug.names = state.names;
 
 enable(state, process.env.DEBUG);
-
-state.formatters.o = (s, v) => {
-	state.inspectOpts.colors = s.useColors;
-	return util
-		.inspect(v, state.inspectOpts)
-		.split("\n")
-		.map((str) => str.trim())
-		.join(" ");
-};
-
-state.formatters.O = (s, v) => {
-	state.inspectOpts.colors = s.useColors;
-	return util.inspect(v, state.inspectOpts);
-};
 
 export default createDebug;
