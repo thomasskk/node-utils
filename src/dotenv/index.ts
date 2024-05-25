@@ -28,12 +28,12 @@ const parse = (src: string) => {
 	return obj;
 };
 
-export const dotenv = async (options: Options = {}) => {
+export const dotenv = (options: Options = {}) => {
 	const dotenvPath = nodePath.resolve(process.cwd(), ".env");
 	const { paths = [dotenvPath] } = options;
 
 	for (const path of paths) {
-		const fileData = await fs.promises.readFile(path, { encoding: "utf8" });
+		const fileData = fs.readFileSync(path, { encoding: "utf8" });
 		const parsed = parse(fileData);
 
 		for (const key in parsed) {
