@@ -2,12 +2,14 @@ import { keys, styles } from "./constants.js";
 import type { Colors } from "./types.js";
 
 const obj = {};
+const objProto = Object.getPrototypeOf(obj);
 
 for (const [key] of styles) {
 	const k = keys[key];
-	Object.defineProperty(Object.getPrototypeOf(obj), key, {
+	Object.defineProperty(objProto, key, {
 		get() {
-			if (this.keys?.push(k)) {
+			if ("keys" in this) {
+				this.keys.push(k);
 				return this;
 			}
 
@@ -25,7 +27,7 @@ for (const [key] of styles) {
 				}
 
 				return beg + txt + end;
-			}, Object.getPrototypeOf(obj));
+			}, objProto);
 			o.keys = [k];
 			return o;
 		},
